@@ -492,12 +492,13 @@ class DomainSigner(object):
   #: @param debug_content: log headers and body after canonicalization (default False)
   #: @param linesep: use this line seperator for folding the headers
   #: @param timeout: number of seconds for DNS lookup timeout (default = 5)
+  #: @param port: Port for UDP and TCP DNS queries (default=53)
   #: @param tlsrpt: message is an RFC 8460 TLS report (default False)
   #: False: Not a tlsrpt, True: Is a tlsrpt, 'strict': tlsrpt, invalid if
   #: service type is missing. For signing, if True, length is never used.
   def __init__(self,message=None,logger=None,signature_algorithm=b'rsa-sha256',
         minkey=1024, linesep=b'\r\n', debug_content=False, timeout=5,
-        tlsrpt=False):
+        port=53,tlsrpt=False):
     self.set_message(message)
     if logger is None:
         logger = get_default_logger()
@@ -522,6 +523,7 @@ class DomainSigner(object):
     # use this line seperator for output
     self.linesep = linesep
     self.timeout = timeout
+    self.port = port
     self.tlsrpt = tlsrpt
     # Service type in DKIM record is s=tlsrpt
     self.seqtlsrpt = False

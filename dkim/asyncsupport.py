@@ -43,13 +43,14 @@ __all__ = [
     ]
 
 
-async def get_txt_async(name, timeout=5):
+async def get_txt_async(name, timeout=5, port=53):
     """Return a TXT record associated with a DNS name in an asnyc loop. For
     DKIM we can assume there is only one."""
 
     # Note: This will use the existing loop or create one if needed
     loop = asyncio.get_event_loop()
-    resolver = aiodns.DNSResolver(loop=loop, timeout=timeout)
+    resolver = aiodns.DNSResolver(loop=loop, timeout=timeout, udp_port=port,
+            tcp_port=port)
 
     async def query(name, qtype):
         return await resolver.query(name, qtype)
@@ -66,8 +67,8 @@ async def get_txt_async(name, timeout=5):
         return None
 
 
-async def load_pk_from_dns_async(name, dnsfunc, timeout=5):
-  s = await dnsfunc(name, timeout=timeout)
+async def load_pk_from_dns_async(name, dnsfunc, timeout=5, port=53):
+  s = await dnsfunc(name, timeout=timeout, port=port)
   pk, keysize, ktag, seqtlsrpt = dkim.evaluate_pk(name, s)
   return pk, keysize, ktag, seqtlsrpt
 
@@ -86,7 +87,7 @@ class DKIM(dkim.DKIM):
     name = sig[b's'] + b"._domainkey." + sig[b'd'] + b"."
     try:
       self.pk, self.keysize, self.ktag, self.seqtlsrpt = await load_pk_from_dns_async(name,
-              dnsfunc, timeout=self.timeout)
+              dnsfunc, timeout=self.timeout, port=self.port)
     except dkim.KeyFormatError as e:
       self.logger.error("%s" % e)
       return False
@@ -99,11 +100,12 @@ class DKIM(dkim.DKIM):
 
 
 async def verify_async(message, logger=None, dnsfunc=None, minkey=1024,
-        timeout=5, tlsrpt=False):
+        timeout=5, port=53, tlsrpt=False):
     """Verify the first (topmost) DKIM signature on an RFC822 formatted message in an asyncio contxt.
     @param message: an RFC822 formatted message (with either \\n or \\r\\n line endings)
     @param logger: a logger to which debug info will be written (default None)
     @param timeout: number of seconds for DNS lookup timeout (default = 5)
+    @param port: Port to use for UDP and TCP DNS queries (default = 53)
     @param tlsrpt: message is an RFC 8460 TLS report (default False)
     False: Not a tlsrpt, True: Is a tlsrpt, 'strict': tlsrpt, invalid if
     service type is missing. For signing, if True, length is never used.
@@ -114,7 +116,7 @@ async def verify_async(message, logger=None, dnsfunc=None, minkey=1024,
     loop = asyncio.get_event_loop()
     if not dnsfunc:
         dnsfunc=get_txt_async
-    d = DKIM(message,logger=logger,minkey=minkey,timeout=timeout,tlsrpt=tlsrpt)
+    d = DKIM(message,logger=logger,minkey=minkey,timeout=timeout,port=port,tlsrpt=tlsrpt)
     try:
         return await d.verify(dnsfunc=dnsfunc)
     except dkim.DKIMException as x:
