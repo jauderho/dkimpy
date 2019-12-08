@@ -37,6 +37,7 @@ import hashlib
 import logging
 import re
 import time
+import binascii
 
 # only needed for arc
 try:
@@ -674,6 +675,9 @@ class DomainSigner(object):
       pk, self.keysize, ktag = load_pk_from_dns(name, dnsfunc)
     except KeyFormatError as e:
       self.logger.error("%s" % e)
+      return False
+    except binascii.Error as e:
+      self.logger.error('KeyFormatError: {0}'.format(e))
       return False
 
     try:
