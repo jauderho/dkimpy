@@ -22,7 +22,7 @@
 # Copyright (c) 2018 Scott Kitterman <scott@kitterman.com>
 
 import unittest
-
+import sys
 
 def test_suite():
     from dkim.tests import (
@@ -47,5 +47,8 @@ def test_suite():
         test_arc,
         test_dnsplug,
         ]
+    if sys.version_info >= (3, 5):
+        from dkim.tests import test_dkim_async
+        modules.append(test_dkim_async)
     suites = [x.test_suite() for x in modules]
     return unittest.TestSuite(suites)

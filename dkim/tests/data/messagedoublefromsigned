@@ -1,0 +1,18 @@
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kitterman.com; 
+ i=@kitterman.com; q=dns/txt; s=201903r; t=1568660895; 
+ h=message-id : date : from : to : subject : from; 
+ bh=wE7NXSkgnx9PGiavN4OZhJztvkqPDlemV3OGuEnLwNo=; 
+ b=Yl2eVBWS7RCqXkIlGRZilfrUQqpYw9GaLlkxyUDGOGv2/c966noOvizM
+ /nVaJ0Slp7nMljKiFaWI+JphNE+DsE0N8glp2+cJJyowAoYjNVOct6ZVGU
+ J8D3bwEwz2M8Snru+Ya5C2qQq1LWrvDIsxk/5pakwZajRVMIALeOrZpyzU
+ WMFSsUQCdhwvi1VeGq5lH4WYDQwaZEZc5psS5eA0nsb6OZqfYHTGjxpweP
+ TFNIB7nfXyihnY79MbNEOUyYFAJNSbJyyFJwT5EPKsE0DbjoX/25/75n0X
+ Ilnn9g5h+6WMT1vWjRaAzLqDmQgp67er2kjC2ujRLIjn3jcdo7gcFQ==
+Message-ID: <128example@kitterman.com>
+Date: Mon, 16 Sep 2019 01:02:03 -0400
+From: Test User <test@kitterman.org>,Scott Kitterman <scott@kitterman.com>
+To: postmaster@relay02.kitterman.com
+Subject: Testing multi-from
+
+This is a test message.
+
