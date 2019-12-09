@@ -4,18 +4,18 @@ https://launchpad.net/dkimpy/
 Friendly fork of:
 http://hewgill.com/pydkim/
 
-INTRODUCTION
+# INTRODUCTION
 
 dkimpy is a library that implements DKIM (DomainKeys Identified Mail) email
 signing and verification.  Basic DKIM requirements are defined in RFC 6376:
 
 https://tools.ietf.org/html/rfc6376
 
-VERSION
+# VERSION
 
 This is dkimpy 1.0.0.
 
-REQUIREMENTS
+# REQUIREMENTS
 
 Dependencies will be automatically included for normal DKIM usage.  The
 extras_requires feature 'ed25519' will add the dependencies needed for signing
@@ -34,40 +34,46 @@ needed for asyncio.
  - PyNaCl.  Needed for use of ed25519 capability.
  - aiodns.  Needed for asycnio (Requires python3.5 or later)
 
-INSTALLATION
+# INSTALLATION
 
 This package includes a scripts and man pages.  For those to be installed when
 installing using setup.py, the following incantation is required because
 setuptools developers decided not being able to do this by default is a
 feature:
 
-python3 setup.py install --single-version-externally-managed --record=/dev/null
+```python3 setup.py install --single-version-externally-managed --record=/dev/null```
 
-DOCUMENTATION
+# DOCUMENTATION
 
 An online version of the package documentation can be found at:
 
 https://gathman.org/pydkim/
 
-TESTING
+# TESTING
 
 To run dkimpy's test suite:
 
-    PYTHONPATH=. python3 dkim
+```PYTHONPATH=. python3 dkim```
+
 or
-    python3 test.py
+
+```python3 test.py```
+
 or
-    PYTHONPATH=. python3 -m unittest dkim.tests.test_suite
+
+```PYTHONPATH=. python3 -m unittest dkim.tests.test_suite```
+
 
 Alternatively, if you have testrepository installed:
 
-    testr init
-    testr run
+```testr init```
 
-You should install all optional dependencies, e.g. by creating a virtualenv
-and using:
+```testr run```
 
-    pip install -e '.[testing]'
+You should install all optional dependencies required for the test suite, e.g.
+by creating a virtualenv and using:
+
+```pip install -e '.[testing]'```
 
 The included ARC tests are very limited.  The primary testing method for ARC
 is using the ARC test suite: https://github.com/ValiMail/arc_test_suite
@@ -76,10 +82,10 @@ As of 0.6.0, all tests pass for both python2.7 and python3. The test suite
  ships with test runners for dkimpy.  After downloading the test suite, you
  can run the signing and validation tests like this:
 
-python2.7 ./testarc.py sign runners/arcsigntest.py
-python2.7 ./testarc.py validate runners/arcverifytest.py
+```python2.7 ./testarc.py sign runners/arcsigntest.py```
+```python2.7 ./testarc.py validate runners/arcverifytest.py```
 
-USAGE
+# USAGE
 
 The dkimpy library offers one module called dkim. The sign() function takes an
 RFC822 formatted message, along with some signing options, and returns a
@@ -94,10 +100,14 @@ signatures.  To restore the previous behavior, you can add them back after
 instantiating your DKIM class using the add_frozen function as shown in the
 following example:
 
+```python
 >>> dkim = DKIM()
 >>> dkim.add_frozen((b'date',b'subject'))
 >>> [text(x) for x in sorted(dkim.frozen_sign)]
 ['date', 'from', 'subject']
+```
+
+## DKIM RSA MODERNIZATION (RFC 8301)
 
 RFC8301 updated DKIM requirements in two ways:
 
@@ -116,6 +126,8 @@ verifying rsa-sha1 signatures.  There are still some significant users of
 rsa-sha1 signatures, so operationally it's premature to disable verification
 of rsa-sha1.
 
+## ED25519 (RFC 8463) SUPPORT
+
 As of version 0.7, experimental signing and verifying of DKIM Ed25519
 signatures is supported as described in draft-ietf-dcrup-dkim-crypto:
 
@@ -126,6 +138,8 @@ and dkimpy 0.7 and later are aligned to its requirements.  As of 0.8, ed25519
 need not be considered experimental.  The dkimpy implementation has
 successfully interoperated with three other implementations and the technical
 parameters for ed25519-sha256 are defined and stable.
+
+## DKIM SCRIPTS
 
 Three helper programs are also supplied: dknewkey, dkimsign and
 dkimverify
@@ -146,6 +160,8 @@ dkimverify reads an RFC822 message on standard input, and returns with exit
 code 0 if the signature verifies successfully. Otherwise, it returns with exit
 code 1. 
 
+## ARC (Authenticated Receive Chain)
+
 As of version 0.6.0, dkimpy provides experimental support for ARC (Authenticated
 Received Chain).  See RFC 8617 for the current version of ARC:
 
@@ -156,12 +172,13 @@ arc_sign and arc_verify functions as well as an ARC class.
 
 Both DKIM ed25519 and ARC are now considered stable (no longer experimantal).
 
-ASYNC SUPPORT
+## ASYNC SUPPORT
 
 As of version 1.0, an alternative to dkim.verify for use in an async
 environment is provied.  It requires aiodns, https://pypi.org/project/aiodns/.
 Here is a simple example of dkim.verify_async usage:
 
+```python
 >>> sys.stdin = sys.stdin.detach()
 >>>
 >>> async def main():
@@ -170,8 +187,11 @@ Here is a simple example of dkim.verify_async usage:
 >>>
 >>> if __name__ == "__main__":
 >>>     res = asyncio.run(main())
+```
 
 This feature requires python3.5 or newer.
+
+## TLSRPT (TLS Report)
 
 As of version 1.0, the RFC 8460 tlsrpt service type is supported:
 
@@ -182,13 +202,15 @@ service type (s=) is optional in the DKIM public key record, it is not
 required by RFC 8460.  When checking for a tlsrpt signature, set the tlsrpt=
 flag when verifying the signature:
 
+```python
 >>> res = dkim.verify(smessage, tlsrpt='strict')
+```
 
 If tlsrpt='strict', only public key records with s=tlsrpt will be considered
 valid.  If set to tlsrpt=True, the service type is not required, but other
 RFC 8460 requirements are applied.
 
-FEEDBACK
+# FEEDBACK
 
 Bug reports may be submitted to the bug tracker for the dkimpy project on
 launchpad.

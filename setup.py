@@ -37,14 +37,15 @@ try:
 except ImportError:  # If PyDNS is not installed, prefer dnspython
     kw['install_requires'] = ['dnspython']
 
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
 setup(
     name = "dkimpy",
     version = version,
-    description = "DKIM (DomainKeys Identified Mail)",
-    long_description =
-    """dkimpy is a Python library that implements DKIM (DomainKeys
-Identified Mail) and ARC (Authenticated Received Chain) email signing and 
-verification.""",
+    description = "DKIM (DomainKeys Identified Mail), ARC (Authenticated Receive Chain), and TLSRPT (TLS Report) email signing and verification",
+    long_description=long_description,
+    long_description_content_type='text/markdown',
     author = "Scott Kitterman",
     author_email = "scott@kitterman.com",
     url = "https://launchpad.net/dkimpy",

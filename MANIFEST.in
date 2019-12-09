@@ -2,7 +2,7 @@ include dkim/*
 include dkim/tests/*
 include dkim/tests/data/*
 include LICENSE
-include README
+include README.md
 include ChangeLog
 include MANIFEST.in
 include man/*
