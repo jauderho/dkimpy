@@ -38,6 +38,7 @@ import logging
 import re
 import sys
 import time
+import binascii
 
 # only needed for arc
 try:
@@ -688,7 +689,6 @@ class DomainSigner(object):
 
     return header_value
 
-
   def verify_sig_process(self, sig, include_headers, sig_header, dnsfunc):
     """Non-async sensitive verify_sig elements.  Separated to avoid async code
     duplication."""
@@ -774,6 +774,9 @@ class DomainSigner(object):
               dnsfunc, timeout=self.timeout)
     except KeyFormatError as e:
       self.logger.error("%s" % e)
+      return False
+    except binascii.Error as e:
+      self.logger.error('KeyFormatError: {0}'.format(e))
       return False
     return self.verify_sig_process(sig, include_headers, sig_header, dnsfunc)
 
@@ -890,10 +893,13 @@ class DKIM(DomainSigner):
     self.signature_fields = dict(sigfields)
     return b'DKIM-Signature: ' + res
 
+  #: Checks if any DKIM signature is present
+  #: @return: True if there is one or more DKIM signatures present or False otherwise
+  def present(self):
+    return (len([(x,y) for x,y in self.headers if x.lower() == b"dkim-signature"]) > 0)
 
   def verify_headerprep(self, idx=0):
     """Non-DNS verify parts to minimize asyncio code duplication."""
-
 
     sigheaders = [(x,y) for x,y in self.headers if x.lower() == b"dkim-signature"]
     if len(sigheaders) <= idx:
