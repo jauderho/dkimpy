@@ -7,3 +7,4 @@ include ChangeLog
 include MANIFEST.in
 include man/*
 include test.py
+exclude dkim/*.pyc dkim/tests/*.pyc
