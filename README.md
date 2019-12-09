@@ -25,8 +25,8 @@ Similarly, extras_requires feature 'asyncio' will add the extra dependencies
 needed for asyncio.
 
  - Python 2.x >= 2.7, or Python 3.x >= 3.5.  Recent versions have not been
-   tested on python < 2.7 or python3 < 3.5, but may still work on python2.6
-   and python 3.1 - 3.4.
+   tested on python < 2.7 or python3 < 3.4, but may still work on python2.6
+   and python 3.1 - 3.3.
  - dnspython or pydns. dnspython is preferred if both are present and
    installed to satisfy the DNS module requirement if neither are installed.
  - argparse.  Standard library in python2.7 and later.
