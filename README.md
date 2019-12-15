@@ -139,6 +139,11 @@ need not be considered experimental.  The dkimpy implementation has
 successfully interoperated with three other implementations and the technical
 parameters for ed25519-sha256 are defined and stable.
 
+To install from pypi with the required optional depenencies, use the ed25519
+option:
+
+```pip install -e '.[ed25519]'```
+
 ## DKIM SCRIPTS
 
 Three helper programs are also supplied: dknewkey, dkimsign and

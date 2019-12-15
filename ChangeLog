@@ -1,6 +1,8 @@
 Version 1.0.1
     - Follow CNAMES when looking up key records when using DNS (pydns)
       (LP: #1856421)
+    - Provide specialized error message when signing or verifying ed25519
+      signatures and pynacl is not installed (LP: #1854475)
 
 2019-12-09 Version 1.0.0
     - Add support for RFC 8460 tlsrpt DKIM signature processing (LP: #1847020)

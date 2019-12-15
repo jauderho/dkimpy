@@ -184,7 +184,6 @@ class NaClNotFoundError(DKIMException):
     """ Nacl package not installed, needed for ed25119 signatures """
     pass
 
-
 class UnknownKeyTypeError(DKIMException):
     """ Key type (k tag) is not known (rsa/ed25519) """
 
@@ -443,7 +442,10 @@ def evaluate_pk(name, s):
       pass
   try:
       if pub[b'k'] == b'ed25519':
-          pk = nacl.signing.VerifyKey(pub[b'p'], encoder=nacl.encoding.Base64Encoder)
+          try:
+              pk = nacl.signing.VerifyKey(pub[b'p'], encoder=nacl.encoding.Base64Encoder)
+          except NameError:
+              raise NaClNotFoundError('pynacl module required for ed25519 signing, see README.md')
           keysize = 256
           ktag = b'ed25519'
   except KeyError:
@@ -826,7 +828,10 @@ class DKIM(DomainSigner):
         except UnparsableKeyError as e:
             raise KeyFormatError(str(e))
     elif self.signature_algorithm == b'ed25519-sha256':
-        pk = nacl.signing.SigningKey(privkey, encoder=nacl.encoding.Base64Encoder)
+        try:
+            pk = nacl.signing.SigningKey(privkey, encoder=nacl.encoding.Base64Encoder)
+        except NameError:
+            raise NaClNotFoundError('pynacl module required for ed25519 signing, see README.md')
 
     if identity is not None and not identity.endswith(domain):
         raise ParameterError("identity must end with domain")
