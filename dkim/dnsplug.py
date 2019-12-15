@@ -44,7 +44,10 @@ def get_txt_pydns(name):
     response = DNS.DnsRequest(name, qtype='txt').req()
     if not response.answers:
         return None
-    return b''.join(response.answers[0]['data'])
+    for answer in response.answers:
+        if answer['typename'].lower() == 'txt':
+            return b''.join(answer['data'])
+    return None
 
 
 def get_txt_Milter_dns(name):
