@@ -44,7 +44,10 @@ def get_txt_pydns(name, timeout=5):
     response = DNS.DnsRequest(name, qtype='txt', timeout=timeout).req()
     if not response.answers:
         return None
-    return b''.join(response.answers[0]['data'])
+    for answer in response.answers:
+        if answer['typename'].lower() == 'txt':
+            return b''.join(answer['data'])
+    return None
 
 
 # No longer used since it doesn't support timeout

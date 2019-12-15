@@ -1,3 +1,7 @@
+Version 1.0.1
+    - Follow CNAMES when looking up key records when using DNS (pydns)
+      (LP: #1856421)
+
 2019-12-09 Version 1.0.0
     - Add support for RFC 8460 tlsrpt DKIM signature processing (LP: #1847020)
     - Add async support with aiodns for DKIM verification (ARC not supported)
