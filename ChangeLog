@@ -1,6 +1,8 @@
 Version 0.9.6
     - Follow CNAMES when looking up key records when using DNS (pydns)
       (LP: #1856421)
+    - Provide specialized error message when signing or verifying ed25519
+      signatures and pynacl is not installed (LP: #1854475)
     - Catch binascii related key format errors (LP: #1854477)
 
 2019-10-07 Version 0.9.5
