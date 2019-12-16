@@ -1,5 +1,7 @@
 Verstion 1.0.2
     - Update documentation URL in README.md
+    - Set minimum dnspython version to 1.16 because previous versions can not
+      support the timeout parameter (LP: #1856546)
 
 2019-12-15 Version 1.0.1
     - Follow CNAMES when looking up key records when using DNS (pydns)

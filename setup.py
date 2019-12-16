@@ -35,7 +35,7 @@ try:
     else:
         kw['install_requires'] = ['Py3DNS']
 except ImportError:  # If PyDNS is not installed, prefer dnspython
-    kw['install_requires'] = ['dnspython']
+    kw['install_requires'] = ['dnspython>=1.16.0']
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
