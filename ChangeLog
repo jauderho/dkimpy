@@ -1,3 +1,6 @@
+Verstion 1.0.2
+    - Update documentation URL in README.md
+
 2019-12-15 Version 1.0.1
     - Follow CNAMES when looking up key records when using DNS (pydns)
       (LP: #1856421)
