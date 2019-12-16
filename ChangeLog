@@ -1,4 +1,4 @@
-Verstion 1.0.2
+Verstion 1.1
     - Update documentation URL in README.md
     - Set minimum dnspython version to 1.16 because previous versions can not
       support the timeout parameter (LP: #1856546)
