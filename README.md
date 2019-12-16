@@ -45,9 +45,10 @@ feature:
 
 # DOCUMENTATION
 
-An online version of the package documentation can be found at:
+An online version of the package documentation for the most recent release can
+be found at:
 
-https://gathman.org/pydkim/
+https://pymilter.org/pydkim/
 
 # TESTING
 
