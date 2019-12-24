@@ -1,4 +1,4 @@
-Version 0.9.6
+2019-12-24 Version 0.9.6
     - Follow CNAMES when looking up key records when using DNS (pydns)
       (LP: #1856421)
     - Provide specialized error message when signing or verifying ed25519
