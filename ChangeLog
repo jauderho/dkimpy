@@ -1,4 +1,6 @@
-Verstion 1.0.2
+2019-12-31 Version 1.0.2
+    - dknewkey: On posix operating systems set file permissions to 600 for
+      ed25519 private key files (as is already done for RSA) (LP: #1857827)
     - Update documentation URL in README.md
     - Set minimum dnspython version to 1.16 because previous versions can not
       support the timeout parameter (LP: #1856546)
