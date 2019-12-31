@@ -63,6 +63,8 @@ def GenEd25519Keys(private_key_file):
     priv_key = skg.generate()
     with open(private_key_file, 'w') as pkf:
         pkf.write(priv_key.encode(encoder=nacl.encoding.Base64Encoder).decode("utf-8"))
+    if os.name == 'posix':
+        os.chmod(private_key_file, 0o600)
     return(priv_key)
 
 def ExtractRSADnsPublicKey(private_key_file, dns_file):

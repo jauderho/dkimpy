@@ -1,3 +1,7 @@
+Version 0.9.7
+    - dknewkey: On posix operating systems set file permissions to 600 for
+      ed25519 private key files (as is already done for RSA) (LP: #1857827)
+
 2019-12-24 Version 0.9.6
     - Follow CNAMES when looking up key records when using DNS (pydns)
       (LP: #1856421)
