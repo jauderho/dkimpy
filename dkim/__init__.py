@@ -934,7 +934,7 @@ class DKIM(DomainSigner):
   #: @return: True if signature verifies or False otherwise
   #: @raise DKIMException: when the message, signature, or key are badly formed
   def verify(self,idx=0,dnsfunc=get_txt):
-    sig, include_headers, sigheaders = self.verify_headerprep(idx=0)
+    sig, include_headers, sigheaders = self.verify_headerprep(idx)
     return self.verify_sig(sig, include_headers, sigheaders[idx], dnsfunc)
 
 
