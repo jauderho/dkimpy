@@ -13,7 +13,7 @@ https://tools.ietf.org/html/rfc6376
 
 # VERSION
 
-This is dkimpy 1.0.2.
+This is dkimpy 1.0.3.
 
 # REQUIREMENTS
 

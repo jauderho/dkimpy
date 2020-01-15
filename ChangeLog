@@ -1,4 +1,4 @@
-Version 1.1
+2020-01-15 Version 1.0.3
     - Correct signature indexing error introduced in 1.0.0 that prevents
       verification of multiple signatures in a single message
 
