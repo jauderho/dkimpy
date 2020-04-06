@@ -24,11 +24,17 @@
 from __future__ import print_function
 
 import sys
+import argparse
 
 import dkim
 
-
 def main():
+    parser = argparse.ArgumentParser(
+        description='Verify DKIM signature for email messages.',
+        epilog="message to be verified follows commands on stdin")
+    parser.add_argument('--index', metavar='N', type=int, default=0,
+        help='Index of DKIM signature header to verify: default=0')
+    args=parser.parse_args()
     if sys.version_info[0] >= 3:
         # Make sys.stdin a binary stream.
         sys.stdin = sys.stdin.detach()
@@ -38,9 +44,9 @@ def main():
     if verbose:
         import logging
         d = dkim.DKIM(message, logger=logging)
-        res = d.verify()
     else:
-        res = dkim.verify(message)
+        d = dkim.DKIM(message)
+    res = d.verify(args.index)
     if not res:
         print("signature verification failed")
         sys.exit(1)
