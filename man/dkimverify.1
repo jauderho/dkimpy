@@ -133,13 +133,20 @@ dkimverify
 \-
 Script for DKIM verifying messages on stdin
 .SH "VERSION"
-0\.6\.0
+1\.1\.0
 
 .SH "DESCRIPTION"
 
 dkimverify reads an RFC822 message on standard input, and returns with exit
 code 0 if the signature verifies successfully. Otherwise, it returns with exit
 code 1.
+
+.SH "USAGE"
+usage: dkimverify.py [\-h] [\-\-index N] <message
+
+optional arguments:
+  \-h, \-\-help  show this help message and exit
+  \-\-index N   Index of DKIM signature header to verify: default=0
 
 .SH "AUTHORS"
 This version of \fBdkimverify\fR was written by Greg Hewgill <greg@hewgill.com>.
