@@ -1,8 +1,10 @@
+Version 1.0.4
+    - Correct dkim.verify processing to avoid errors when verifying messages
+      with no DKIM signatures
+
 2020-01-15 Version 1.0.3
     - Correct signature indexing error introduced in 1.0.0 that prevents
       verification of multiple signatures in a single message
-    - Correct dkim.verify processing to avoid errors when verifying messages
-      with no DKIM signatures
 
 2019-12-31 Version 1.0.2
     - dknewkey: On posix operating systems set file permissions to 600 for
