@@ -206,6 +206,11 @@ p=11qYAYKxCrfVS/7TyWQHOg7hcvPapiMlrwIaaPcHURo="""
                 res = dkim.verify(sig + self.message, dnsfunc=self.dnsfunc)
                 self.assertTrue(res)
 
+    def test_verifies_nosig(self):
+        # A message without signature does not verify.
+        res = dkim.verify(self.message, dnsfunc=self.dnsfunc)
+        self.assertFalse(res)
+
     def test_double_verifies(self):
         # A message also containing a ed25519 signature verifies after being signed with rsa.
         for header_algo in (b"simple", b"relaxed"):
