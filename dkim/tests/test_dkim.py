@@ -60,6 +60,7 @@ class TestSignAndVerify(unittest.TestCase):
         self.message3 = read_test_data("rfc6376.msg")
         self.message4 = read_test_data("rfc6376.signed.msg")
         self.message5 = read_test_data("rfc6376.signed.rsa.msg")
+        self.message6 = read_test_data("test.message.baddomain")
         self.key = read_test_data("test.private")
         self.rfckey = read_test_data("rfc8032_7_1.key")
 
@@ -196,6 +197,23 @@ p=11qYAYKxCrfVS/7TyWQHOg7hcvPapiMlrwIaaPcHURo="""
         self.assertTrue(domain in _dns_responses,domain)
         return _dns_responses[domain]
 
+    def dnsfunc7(self, domain, timeout=5):
+        sample_dns = """\
+k=rsa; s=email;\
+p=MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBANmBe10IgY+u7h3enWTukkqtUD5PR52T\
+b/mPfjC0QJTocVBq6Za/PlzfV+Py92VaCak19F4WrbVTK5Gg5tW220MCAwEAAQ=="""
+
+        _dns_responses = {
+          'test._domainkey.legitimate.com(.attacker.com.': read_test_data("test.txt"),
+        }
+        try:
+            domain = domain.decode('ascii')
+        except UnicodeDecodeError:
+            return None
+        self.assertTrue(domain in _dns_responses,domain)
+        return _dns_responses[domain]
+
+
     def test_verifies(self):
         # A message verifies after being signed.
         for header_algo in (b"simple", b"relaxed"):
@@ -278,6 +296,18 @@ p=11qYAYKxCrfVS/7TyWQHOg7hcvPapiMlrwIaaPcHURo="""
                     canonicalize=(header_algo, body_algo))
                 res = dkim.verify(sig + self.message, dnsfunc=self.dnsfunc4)
                 self.assertFalse(res)
+
+    def test_invalid_domain_sign(self):
+        # RFC6376 says domain can be Alpha, Num, - only.
+        sig = dkim.sign(
+            self.message, b"test", b"legitimate.com(.attacker.com", self.key)
+        res = dkim.verify(sig + self.message, dnsfunc=self.dnsfunc7)
+        self.assertFalse(res)
+
+    def test_invalid_domain_verify(self):
+        # RFC6376 says domain can be Alpha, Num, - only.
+        res = dkim.verify(self.message6, dnsfunc=self.dnsfunc7)
+        self.assertFalse(res)
 
     def test_simple_signature(self):
         # A message verifies after being signed with SHOULD headers
