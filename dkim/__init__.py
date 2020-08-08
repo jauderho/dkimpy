@@ -996,7 +996,7 @@ class ARC(DomainSigner):
   #: @param selector: the DKIM selector value for the signature
   #: @param domain: the DKIM domain value for the signature
   #: @param privkey: a PKCS#1 private key in base64-encoded text form
-  #: @param srv_id: an srv_id for identitfying AR headers to sign & extract cv from
+  #: @param srv_id: a srv_id for identifying AR headers to sign & extract cv from
   #: @param include_headers: a list of strings indicating which headers
   #: are to be signed (default rfc4871 recommended headers)
   #: @return: list of ARC set header fields

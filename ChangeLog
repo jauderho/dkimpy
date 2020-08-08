@@ -6,6 +6,7 @@ Version 1.1
     - Correct dkim.verify processing to avoid errors when verifying messages
       with no DKIM signatures
     - Update dnsplug for DNS Python (dns) 2.0 compatibility (LP: #1888583)
+    - Fix @param srv_id typos (LP: #1890532)
 
 2019-12-31 Version 1.0.2
     - dknewkey: On posix operating systems set file permissions to 600 for
