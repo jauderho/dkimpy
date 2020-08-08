@@ -31,7 +31,7 @@ def get_txt_dnspython(name, timeout=5):
       a = dns.resolver.query(name, dns.rdatatype.TXT,raise_on_no_answer=False, lifetime=timeout)
       for r in a.response.answer:
           if r.rdtype == dns.rdatatype.TXT:
-              return b"".join(r.items[0].strings)
+              return b"".join(list(r.items)[0].strings)
     except dns.resolver.NXDOMAIN: pass
     return None
 
