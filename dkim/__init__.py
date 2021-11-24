@@ -832,6 +832,8 @@ class DKIM(DomainSigner):
             pk = nacl.signing.SigningKey(privkey, encoder=nacl.encoding.Base64Encoder)
         except NameError:
             raise NaClNotFoundError('pynacl module required for ed25519 signing, see README.md')
+        except nacl.exceptions.ValueError:
+            raise KeyFormatError('invalid ed25519 private key or format')
 
     if identity is not None and not identity.endswith(domain):
         raise ParameterError("identity must end with domain")

@@ -7,6 +7,8 @@ Version 1.1
       with no DKIM signatures
     - Update dnsplug for DNS Python (dns) 2.0 compatibility (LP: #1888583)
     - Fix @param srv_id typos (LP: #1890532)
+    - Provide more specific error message when ed25519 private key is invalid
+      (See LP 1901569 for background)
 
 2019-12-31 Version 1.0.2
     - dknewkey: On posix operating systems set file permissions to 600 for
