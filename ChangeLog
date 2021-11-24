@@ -1,6 +1,8 @@
 2020-08-08 Version 1.0.5
     - Update dnsplug for DNS Python (dns) 2.0 compatibility (LP: #1888583)
     - Fix @param srv_id typos (LP: #1890532)
+    - Provide more specific error message when ed25519 private key is invalid
+      (See LP 1901569 for background)
 
 2020-04-06 Version 1.0.4
     - Correct dkim.verify processing to avoid errors when verifying messages
