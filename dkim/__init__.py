@@ -286,6 +286,16 @@ def validate_signature_fields(sig, mandatory_fields=[b'v', b'a', b'b', b'bh', b'
     if b'cv' in sig and sig[b'cv'] not in (CV_Pass, CV_Fail, CV_None):
         raise ValidationError("cv= value is not valid (%s)" % sig[b'cv'])
 
+    # Limit domain validation to ASCII domains because too hard
+    try:
+        str(sig[b'd'], 'ascii')
+        # No specials, which is close enough
+        if re.findall(b"[\(\)<>\[\]:;@\\,]", sig[b'd']):
+            raise ValidationError("d= value is not valid (%s)" % sig[b'd'])
+    except UnicodeDecodeError as e:
+        # Not an ASCII domain
+        pass
+
     # Nasty hack to support both str and bytes... check for both the
     # character and integer values.
     if not arc and b'i' in sig and (

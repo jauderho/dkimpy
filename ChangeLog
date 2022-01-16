@@ -1,4 +1,5 @@
 Version 1.1
+    - Add domain validity check for ascii domains (no specials)
     - Add option to specify index number of signature to verify to dkimverify
       (Thanks to Nick Baugh for the change)
     - Correct signature indexing error introduced in 1.0.0 that prevents
