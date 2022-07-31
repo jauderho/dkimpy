@@ -140,7 +140,7 @@ def parse_public_key(data):
 def parse_private_key(data):
     """Parse an RSA private key.
 
-    @param data: DER-encoded RFC8017 RSAPrivateKey.
+    @param data: DER-encoded RFC8017 RSAPrivateKey or CMS-encoded RFC5958 asymetric key package.
     @return: RSA private key
     """
     try:
