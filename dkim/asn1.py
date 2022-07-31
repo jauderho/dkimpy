@@ -84,6 +84,9 @@ def asn1_parse(template, data):
               elif tag == SEQUENCE:
                   r.append(asn1_parse(t[1], data[i:i+length]))
                   i += length
+              elif tag == OCTET_STRING:
+                  r.append(data[i:i+length])
+                  i += length
               else:
                   raise ASN1FormatError(
                       "Unexpected tag in template: %02x" % tag)

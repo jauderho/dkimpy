@@ -48,6 +48,13 @@ from dkim.asn1 import (
     NULL,
     )
 
+ASN1_PKCS8_PrivateKey = [
+    (SEQUENCE, [
+        (INTEGER,),
+        (SEQUENCE, [ (OBJECT_IDENTIFIER,), (NULL,),]),
+        (OCTET_STRING,),
+    ]) 
+]
 
 ASN1_Object = [
     (SEQUENCE, [
@@ -167,7 +174,13 @@ def parse_pem_private_key(data):
         pkdata = base64.b64decode(m.group(1))
     except TypeError as e:
         raise UnparsableKeyError(str(e))
-    return parse_private_key(pkdata)
+    try:
+        pk = parse_private_key(pkdata)
+    except UnparsableKeyError:
+        #If it fails it might be because of PKCS#8 (key generated with openSSL 3.X)
+        pka = asn1_parse(ASN1_PKCS8_PrivateKey, pkdata)
+        pk = parse_private_key(pka[0][2])
+    return pk
 
 
 def EMSA_PKCS1_v1_5_encode(hash, mlen):
