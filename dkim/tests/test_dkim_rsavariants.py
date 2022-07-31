@@ -41,6 +41,7 @@ class TestSignAndVerify(unittest.TestCase):
         self.message = read_test_data("test.message")
         self.key1024 = read_test_data("1024_testkey.key")
         self.key2048 = read_test_data("2048_testkey.key")
+        self.key2048PKCS8 = read_test_data("2048_testkey_PKCS8.key")
 
     def dnsfunc(self, domain, timeout=5):
         _dns_responses = {
@@ -48,6 +49,7 @@ class TestSignAndVerify(unittest.TestCase):
           'test2._domainkey.example.com.': read_test_data("1024_testkey_wo_markers.pub.rsa.txt"),
           'test3._domainkey.example.com.': read_test_data("2048_testkey_wo_markers.pub.txt"),
           'test4._domainkey.example.com.': read_test_data("2048_testkey_wo_markers.pub.rsa.txt"),
+          'test5._domainkey.example.com.': read_test_data("2048_testkey_PKCS8.key.pub.txt")
         }
         try:
             domain = domain.decode('ascii')
@@ -55,7 +57,6 @@ class TestSignAndVerify(unittest.TestCase):
             return None
         self.assertTrue(domain in _dns_responses,domain)
         return _dns_responses[domain]
-
 
     def test_verifies_SubjectPublicKeyInfo1024(self):
         # A message verifies after being signed.
@@ -66,8 +67,6 @@ class TestSignAndVerify(unittest.TestCase):
                     canonicalize=(header_algo, body_algo))
                 res = dkim.verify(sig + self.message, dnsfunc=self.dnsfunc)
                 self.assertTrue(res)
-
-
 
     def test_verifies_RSAPublicKey1024(self):
         # A message verifies after being signed.
@@ -101,6 +100,16 @@ class TestSignAndVerify(unittest.TestCase):
                 res = dkim.verify(sig + self.message, dnsfunc=self.dnsfunc)
                 self.assertTrue(res)
 
+
+    def test_verifies_RSAPublicKey2048PKCS8(self):
+        #A message verifies after being signed (with PKCS8 private key)
+        for header_algo in (b"simple", b"relaxed"):
+            for body_algo in (b"simple", b"relaxed"):
+                sig = dkim.sign(
+                    self.message, b"test5", b"example.com", self.key2048PKCS8,
+                    canonicalize=(header_algo, body_algo))
+                res = dkim.verify(sig + self.message, dnsfunc=self.dnsfunc)
+                self.assertTrue(res)
 
 def test_suite():
     from unittest import TestLoader

@@ -145,8 +145,14 @@ def parse_private_key(data):
     """
     try:
         pka = asn1_parse(ASN1_RSAPrivateKey, data)
-    except ASN1FormatError as e:
-        raise UnparsableKeyError('Unparsable private key: ' + str(e))
+    except ASN1FormatError:
+        try:
+            #If it fails it might be because of PKCS#8 (key generated with openSSL 3.X)
+            pkt = asn1_parse(ASN1_PKCS8_PrivateKey, data)
+            pka = asn1_parse(ASN1_RSAPrivateKey, pkt[0][2])
+        except ASN1FormatError as e:
+            raise UnparsableKeyError("Unparsable private key (are your sure it is encoded in PKCS#1 or PKCS#8 standard ?):\n" + str(e))
+
     pk = {
         'version': pka[0][0],
         'modulus': pka[0][1],
@@ -174,13 +180,7 @@ def parse_pem_private_key(data):
         pkdata = base64.b64decode(m.group(1))
     except TypeError as e:
         raise UnparsableKeyError(str(e))
-    try:
-        pk = parse_private_key(pkdata)
-    except UnparsableKeyError:
-        #If it fails it might be because of PKCS#8 (key generated with openSSL 3.X)
-        pka = asn1_parse(ASN1_PKCS8_PrivateKey, pkdata)
-        pk = parse_private_key(pka[0][2])
-    return pk
+    return parse_private_key(pkdata)
 
 
 def EMSA_PKCS1_v1_5_encode(hash, mlen):
