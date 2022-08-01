@@ -24,12 +24,9 @@ import unittest
 import dkim
 import dknewkey
 
-def read_test_data(filename):
-    """Get the content of the given test data file.
+def read_data(path):
+    """Get the content of the given test data file."""
 
-    The files live in dkim/tests/data.
-    """
-    path = os.path.join(os.path.dirname(__file__), 'data', filename)
     with open(path, 'rb') as f:
         return f.read()
 
@@ -38,7 +35,8 @@ class TestSignAndVerify(unittest.TestCase):
     """End-to-end signature and verification tests with a generated key."""
 
     def setUp(self):
-        self.message = read_test_data("test.message")
+        message_dir = os.path.join(os.path.dirname(__file__), 'data', "test.message")
+        self.message = read_data(message_dir)
         self.ed25519_dns_key_file = ""
         self.rsa_dns_key_file = ""
     
@@ -53,7 +51,7 @@ class TestSignAndVerify(unittest.TestCase):
         dknewkey.GenRSAKeys(rsa_key_file, False)
         dknewkey.ExtractRSADnsPublicKey(rsa_key_file, self.rsa_dns_key_file, False)
         #Load the key
-        rsakey = read_test_data(rsa_key_file)
+        rsakey = read_data(rsa_key_file)
         #Test signature with the newely generated key  
         for header_algo in (b"simple", b"relaxed"):
             for body_algo in (b"simple", b"relaxed"):
@@ -74,7 +72,7 @@ class TestSignAndVerify(unittest.TestCase):
         pkt = dknewkey.GenEd25519Keys(ed25519_key_file, False)
         dknewkey.ExtractEd25519PublicKey(self.ed25519_dns_key_file, pkt, False)
         #Load the key
-        ed25519key = read_test_data(ed25519_key_file)
+        ed25519key = read_data(ed25519_key_file)
         #Test signature with the newely generated key 
         for header_algo in (b"simple", b"relaxed"):
             for body_algo in (b"simple", b"relaxed"):
@@ -88,7 +86,7 @@ class TestSignAndVerify(unittest.TestCase):
 
     def dnsfuncRSA(self, domain, timeout=5):
         _dns_responses = {
-            'test._domainkey.example.com.': read_test_data(self.rsa_dns_key_file),
+            'test._domainkey.example.com.': read_data(self.rsa_dns_key_file),
         }
         try:
             domain = domain.decode('ascii')
@@ -99,7 +97,7 @@ class TestSignAndVerify(unittest.TestCase):
 
     def dnsfuncED25519(self, domain, timeout=5):
         _dns_responses = {
-            'test1._domainkey.example.com.': read_test_data(self.ed25519_dns_key_file),
+            'test1._domainkey.example.com.': read_data(self.ed25519_dns_key_file),
         }
         try:
             domain = domain.decode('ascii')
