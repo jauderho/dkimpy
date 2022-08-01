@@ -61,6 +61,7 @@ class TestSignAndVerify(unittest.TestCase):
         self.message4 = read_test_data("rfc6376.signed.msg")
         self.message5 = read_test_data("rfc6376.signed.rsa.msg")
         self.message6 = read_test_data("test.message.baddomain")
+        self.messageutf8 = read_test_data("test_utf8.message")
         self.key = read_test_data("test.private")
         self.rfckey = read_test_data("rfc8032_7_1.key")
 
@@ -213,6 +214,21 @@ b/mPfjC0QJTocVBq6Za/PlzfV+Py92VaCak19F4WrbVTK5Gg5tW220MCAwEAAQ=="""
         self.assertTrue(domain in _dns_responses,domain)
         return _dns_responses[domain]
 
+    def dnsfuncutf8(self, domain, timeout=5):
+        sample_dns = """\
+k=rsa;\
+p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoRtWWrwqnZZDhOhMefleBqY/cKVculS\
+G/9ypotTA9W9f82bay1jT4rgx7LQgX9jQrJoZbjC3Df9YgqDcb+jv+B6kTOOJkQdaWLuw+xk0UZ/p\
+nsWBR3gIo0RbpzUmgdDduCO5ammQU9mi4GJFr3nRbKkHAgTxTgouV3A6jhiPMORuQESjTQt8zgEOa\
+s8adK6RLbLSV28brzLJiu/unYFZuq3kieo/st0zUBDM3audbdn+zX+qgOkgU0lwpAibBjQ1HkWLM/\
+FNdB7nwZELbT2hX2obnMBftJKUsBJVaWQET6tasmKvPxlwADdGct75WhJdfeBYLgLv2RoUji8+muX\
+U2QIDAQABi=="""
+
+        _dns_responses = {
+          '2022._domainkey.κλαρα-σωλις.ευ.': sample_dns,
+          'test._domainkey.legitimate.com(.attacker.com.': read_test_data("test.txt"),
+        }
+        return _dns_responses[domain]
 
     def test_verifies(self):
         # A message verifies after being signed.
@@ -498,6 +514,18 @@ b/mPfjC0QJTocVBq6Za/PlzfV+Py92VaCak19F4WrbVTK5Gg5tW220MCAwEAAQ==
         except dkim.ParameterError as x:
             sigerror = True
         self.assertTrue(sigerror)
+
+    def test_utf_8_verifies(self):
+        # Attempt to verify message with UTF-8 domain.
+        error = False
+        for header_algo in (b"simple", b"relaxed"):
+            for body_algo in (b"simple", b"relaxed"):
+                try:
+                    res = dkim.verify(sig + self.messageutf8, dnsfunc=self.dnsfuncutf8)
+                except:
+                    error = True
+                self.assertFalse(error)
+
 
     def test_validate_signature_fields(self):
       sig = {b'v': b'1',

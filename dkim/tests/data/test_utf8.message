@@ -1,0 +1,19 @@
+Authentication-Results: lists.example.org; arc=none; spf=pass smtp.mfrom=jqd@d1.example; dkim=pass (1024-bit key) header.i=@d1.example; dmarc=pass
+Received: from localhost
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+ d=κλαρα-σωλις.ευ; i=@κλαρα-σωλις.ευ;
+ q=dns/txt; s=2022; t=1642119943; h=message-id : date : mime-version :
+ to : from : subject : content-type : content-transfer-encoding : from;
+ bh=frcCV1k9oG9oKj3dpUqdJg1PxRT2RSN/XKdLCPjaYaY=;
+ b=KR7AGlkgxyOX3jR62O4s+5dehey/2y5KMBGLVuwUclK7SQlD57TlbGlAgTmSqgIkTaiAJ
+ xlwuFOzbwVcjX6VpvuWsEghDItWhA7xj7yW9AuGVXsHClRTyKVMK233q1cpHQ/MV/qfBwO2
+ U6hajK1VT4f6vscROU3BfY1DKh12p7I60PrHCZ0PTA0pwBf0gkT3hdWFED8emrp9kKLFIda
+ B33LmFGxSjPYhJJcJeTv1bHE9sXIvQqhUkqoOpIv6AS8qHXKW9+8Om+Ki9pWb06RqevkgKr
+ Zj4StXlnJZUbiAJ70ltg/mABtYD6wiU+PmVBDoZZqJheoRyMH4q90L0N0FOA==
+Message-ID: <example@example.com>
+Date: Mon, 01 Jan 2011 01:02:03 +0400
+From: Test User <test@κλαρα-σωλις.ευ>
+To: somebody@example.com
+Subject: Testing
+
+This is a test message.
