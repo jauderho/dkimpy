@@ -35,6 +35,7 @@ def test_suite():
         test_util,
         test_arc,
         test_dnsplug,
+        test_dkim_generate,
         )
     modules = [
         test_canonicalization,
@@ -46,6 +47,7 @@ def test_suite():
         test_util,
         test_arc,
         test_dnsplug,
+        test_dkim_generate,
         ]
     suites = [x.test_suite() for x in modules]
     return unittest.TestSuite(suites)

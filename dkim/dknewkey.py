@@ -43,15 +43,17 @@ OPENSSL_BINARY = '/usr/bin/openssl'
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
-def GenRSAKeys(private_key_file):
+def GenRSAKeys(private_key_file, verbose=True):
   """ Generates a suitable private key.  Output is unprotected.
   You should encrypt your keys.
   """
-  eprint('generating ' + private_key_file)
+  if verbose:
+    eprint('generating ' + private_key_file)
   subprocess.check_call([OPENSSL_BINARY, 'genrsa', '-out', private_key_file,
-                         str(BITS_REQUIRED)])
+                         str(BITS_REQUIRED)], 
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-def GenEd25519Keys(private_key_file):
+def GenEd25519Keys(private_key_file, verbose=True):
     """Generates a base64 encoded private key for ed25519 DKIM signing.
     Output is unprotected.  You should protect your keys.
     """
@@ -59,7 +61,8 @@ def GenEd25519Keys(private_key_file):
     import nacl.encoding
     import os
     skg = nacl.signing.SigningKey(seed=os.urandom(32))
-    eprint('generating ' + private_key_file)
+    if verbose:
+        eprint('generating ' + private_key_file)
     priv_key = skg.generate()
     with open(private_key_file, 'w') as pkf:
         pkf.write(priv_key.encode(encoder=nacl.encoding.Base64Encoder).decode("utf-8"))
@@ -67,13 +70,15 @@ def GenEd25519Keys(private_key_file):
         os.chmod(private_key_file, 0o600)
     return(priv_key)
 
-def ExtractRSADnsPublicKey(private_key_file, dns_file):
+def ExtractRSADnsPublicKey(private_key_file, dns_file, verbose=True):
   """ Given a key, extract the bit we should place in DNS.
   """
-  eprint('extracting ' + private_key_file)
+  if verbose:
+    eprint('extracting ' + private_key_file)
   working_file = tempfile.NamedTemporaryFile(delete=False).name
   subprocess.check_call([OPENSSL_BINARY, 'rsa', '-in', private_key_file,
-                         '-out', working_file, '-pubout', '-outform', 'PEM'])
+                         '-out', working_file, '-pubout', '-outform', 'PEM'],
+                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
   try:
       with open(working_file) as wf:
           y = ''
@@ -84,17 +89,19 @@ def ExtractRSADnsPublicKey(private_key_file, dns_file):
   finally:
       os.unlink(working_file)
   with open(dns_file, 'w') as dns_fp:
-      eprint('writing ' + dns_file)
+      if verbose:
+        eprint('writing ' + dns_file)
       dns_fp.write("v=DKIM1; k=rsa; h=sha256; p={0}".format(output))
 
-def ExtractEd25519PublicKey(dns_file, priv_key):
+def ExtractEd25519PublicKey(dns_file, priv_key, verbose=True):
     """ Given a ed25519 key, extract the bit we should place in DNS.
     """
     import nacl.encoding # Yes, pep-8, but let's not make everyone install nacl
     pubkey = priv_key.verify_key
     output = pubkey.encode(encoder=nacl.encoding.Base64Encoder).decode("utf-8")
     with open(dns_file, 'w') as dns_fp:
-        eprint('writing ' + dns_file)
+        if verbose:
+            eprint('writing ' + dns_file)
         dns_fp.write("v=DKIM1; k=ed25519; p={0}".format(output))
 
 def main():
