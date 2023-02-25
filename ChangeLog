@@ -12,6 +12,7 @@ Version 1.1
       (See LP 1901569 for background)
     - Add support for PKCS#8 for private keys, openssl 3 default (LP:
       #1978835) - Thanks to Adrien (spitap) for the change
+    - Add limitations section to README to document current IDN status
 
 2019-12-31 Version 1.0.2
     - dknewkey: On posix operating systems set file permissions to 600 for

@@ -216,6 +216,13 @@ If tlsrpt='strict', only public key records with s=tlsrpt will be considered
 valid.  If set to tlsrpt=True, the service type is not required, but other
 RFC 8460 requirements are applied.
 
+# LIMITATIONS
+
+Dkimpy will correctly sign/verify messages with ASCII or UTF-8 content.
+Messages that contain other types of content will not verify correctly.  It
+does not yet implement RFC 8616, Email Authentication for Internationalized
+Mail.
+
 # FEEDBACK
 
 Bug reports may be submitted to the bug tracker for the dkimpy project on
