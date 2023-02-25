@@ -13,6 +13,8 @@ Version 1.1
     - Add support for PKCS#8 for private keys, openssl 3 default (LP:
       #1978835) - Thanks to Adrien (spitap) for the change
     - Add limitations section to README to document current IDN status
+    - Add USE_ASYNC flag to allow async to be disabled when aiodns is
+    installed (LP: #1954331) - see README.md for details
 
 2019-12-31 Version 1.0.2
     - dknewkey: On posix operating systems set file permissions to 600 for

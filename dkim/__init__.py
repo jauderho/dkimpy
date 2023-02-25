@@ -40,6 +40,9 @@ import sys
 import time
 import binascii
 
+# Set to False to not use async functions even though aiodns is installed.
+USE_ASYNC = True
+
 # only needed for arc
 try:
     from authres import AuthenticationResultsHeader
@@ -72,13 +75,17 @@ from dkim.crypto import (
 try:
     from dkim.dnsplug import get_txt
 except ImportError:
-    try:
-        import aiodns
-        from dkim.asyncsupport import get_txt_async as get_txt
-    except:
-        # Only true if not using async
-        def get_txt(s,timeout=5):
-            raise RuntimeError("DKIM.verify requires DNS or dnspython module")
+    if USE_ASYNC:
+        try:
+            import aiodns
+            from dkim.asyncsupport import get_txt_async as get_txt
+        except:
+            # Only true if not using async
+            def get_txt(s,timeout=5):
+                raise RuntimeError("DKIM.verify requires DNS or dnspython module")
+    else:
+        raise RuntimeError("DKIM.verify requires DNS or dnspython module")
+
 from dkim.util import (
     get_default_logger,
     InvalidTagValueList,
@@ -94,6 +101,7 @@ __all__ = [
     "ValidationError",
     "AuthresNotFoundError",
     "NaClNotFoundError",
+    "USE_ASYNC",
     "CV_Pass",
     "CV_Fail",
     "CV_None",
@@ -1369,7 +1377,7 @@ def verify(message, logger=None, dnsfunc=get_txt, minkey=1024,
 
 
 # aiodns requires Python 3.5+, so no async before that
-if sys.version_info >= (3, 5):
+if sys.version_info >= (3, 5) and USE_ASYNC:
     try:
         import aiodns
         from dkim.asyncsupport import verify_async

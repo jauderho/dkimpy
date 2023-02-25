@@ -197,6 +197,9 @@ Here is a simple example of dkim.verify_async usage:
 
 This feature requires python3.5 or newer.
 
+If aiodns is available, the async functions will be used.  To avoide async
+when aiodns is availale, set dkim.USE_ASYNC = False.
+
 ## TLSRPT (TLS Report)
 
 As of version 1.0, the RFC 8460 tlsrpt service type is supported:
