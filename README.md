@@ -176,6 +176,9 @@ https://tools.ietf.org/html/rfc8617
 In addition to arcsign and arcverify, the dkim module now provides
 arc_sign and arc_verify functions as well as an ARC class.
 
+If an invalid authentication results header field is included in the set for
+ARC, it is ignored and no error is raised.
+
 Both DKIM ed25519 and ARC are now considered stable (no longer experimantal).
 
 ## ASYNC SUPPORT

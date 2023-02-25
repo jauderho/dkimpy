@@ -17,6 +17,8 @@ Version 1.1.0
       installed (LP: #1954331) - see README.md for details
     - Add new dkim.DnsTimeoutError class to report queried domain and selector
       along with timeout error from dnspython (LP: #1873449)
+    - Invalid Authentication-Results header fields are ignored for ARC signing
+      (LP: #1884044)
 
 2019-12-31 Version 1.0.2
     - dknewkey: On posix operating systems set file permissions to 600 for

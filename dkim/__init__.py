@@ -45,7 +45,7 @@ USE_ASYNC = True
 
 # only needed for arc
 try:
-    from authres import AuthenticationResultsHeader
+    import authres
 except ImportError:
     pass
 
@@ -1037,10 +1037,10 @@ class ARC(DomainSigner):
     self.add_should_not(('Authentication-Results',))
     # check if authres has been imported
     try:
-        AuthenticationResultsHeader
+        authres.AuthenticationResultsHeader
     except:
         self.logger.debug("authres package not installed")
-        raise AuthresNotFoundError
+        raise authres.AuthresNotFoundError
 
     try:
         pk = parse_pem_private_key(privkey)
@@ -1049,8 +1049,14 @@ class ARC(DomainSigner):
 
     # extract, parse, filter & group AR headers
     ar_headers = [res.strip() for [ar, res] in self.headers if ar == b'Authentication-Results']
-    grouped_headers = [(res, AuthenticationResultsHeader.parse('Authentication-Results: ' + res.decode('utf-8')))
-                       for res in ar_headers]
+
+    grouped_headers = []
+    for res in ar_headers:
+        try: # see LP: #1884044
+            grouped_headers.append((res, authres.AuthenticationResultsHeader.parse('Authentication-Results: ' + res.decode('utf-8'))))
+        except authres.core.SyntaxError:
+            # Skip over invalid AR header fields
+            pass
     auth_headers = [res for res in grouped_headers if res[1].authserv_id == srv_id.decode('utf-8')]
 
     if len(auth_headers) == 0:
@@ -1064,7 +1070,7 @@ class ARC(DomainSigner):
     auth_results = srv_id + b'; ' + (b';' + self.linesep + b'  ').join(results)
 
     # extract cv
-    parsed_auth_results = AuthenticationResultsHeader.parse('Authentication-Results: ' + auth_results.decode('utf-8'))
+    parsed_auth_results = authres.AuthenticationResultsHeader.parse('Authentication-Results: ' + auth_results.decode('utf-8'))
     arc_results = [res for res in parsed_auth_results.results if res.method == 'arc']
     if len(arc_results) == 0:
       chain_validation_status = CV_None
