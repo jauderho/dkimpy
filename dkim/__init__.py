@@ -101,6 +101,7 @@ __all__ = [
     "ValidationError",
     "AuthresNotFoundError",
     "NaClNotFoundError",
+    "DnsTimeoutError",
     "USE_ASYNC",
     "CV_Pass",
     "CV_Fail",
@@ -194,6 +195,9 @@ class NaClNotFoundError(DKIMException):
 
 class UnknownKeyTypeError(DKIMException):
     """ Key type (k tag) is not known (rsa/ed25519) """
+
+class DnsTimeoutError(DKIMException):
+    """ DNS query for public key timed out """
 
 
 def select_headers(headers, include_headers):
@@ -795,6 +799,10 @@ class DomainSigner(object):
       return False
     except binascii.Error as e:
       self.logger.error('KeyFormatError: {0}'.format(e))
+      return False
+    except dns.exception.Timeout as e:
+      self.logger.error('DnsTimeoutError: Domain: {0} Selector: {1} Error message: {2}'.format(
+          sig[b'd'], sig[b's'], e))
       return False
     return self.verify_sig_process(sig, include_headers, sig_header, dnsfunc)
 

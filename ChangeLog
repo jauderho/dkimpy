@@ -1,4 +1,4 @@
-Version 1.1
+Version 1.1.0
     - Add domain validity check for ascii domains (no specials)
     - Add option to specify index number of signature to verify to dkimverify
       (Thanks to Nick Baugh for the change)
@@ -14,7 +14,9 @@ Version 1.1
       #1978835) - Thanks to Adrien (spitap) for the change
     - Add limitations section to README to document current IDN status
     - Add USE_ASYNC flag to allow async to be disabled when aiodns is
-    installed (LP: #1954331) - see README.md for details
+      installed (LP: #1954331) - see README.md for details
+    - Add new dkim.DnsTimeoutError class to report queried domain and selector
+      along with timeout error from dnspython (LP: #1873449)
 
 2019-12-31 Version 1.0.2
     - dknewkey: On posix operating systems set file permissions to 600 for
