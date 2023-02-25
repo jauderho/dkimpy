@@ -19,6 +19,10 @@ Version 1.1.0
       along with timeout error from dnspython (LP: #1873449)
     - Invalid Authentication-Results header fields are ignored for ARC signing
       (LP: #1884044)
+    - Correct base64 validation regexp so that valid signature with == split
+      between two lines are not incorrectly evaluated as invalid (LP:
+      #2002295) - Thanks to <https://launchpad.net/~obadz> for the report and
+      the proposed fix
 
 2019-12-31 Version 1.0.2
     - dknewkey: On posix operating systems set file permissions to 600 for

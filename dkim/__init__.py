@@ -284,13 +284,13 @@ def validate_signature_fields(sig, mandatory_fields=[b'v', b'a', b'b', b'bh', b'
         raise ValidationError("unknown signature algorithm: %s" % sig[b'a'])
 
     if b'b' in sig:
-        if re.match(br"[\s0-9A-Za-z+/]+=*$", sig[b'b']) is None:
+        if re.match(br"[\s0-9A-Za-z+/]+[\s=]*$", sig[b'b']) is None:
             raise ValidationError("b= value is not valid base64 (%s)" % sig[b'b'])
         if len(re.sub(br"\s+", b"", sig[b'b'])) % 4 != 0:
             raise ValidationError("b= value is not valid base64 (%s)" % sig[b'b'])
 
     if b'bh' in sig:
-        if re.match(br"[\s0-9A-Za-z+/]+=*$", sig[b'bh']) is None:
+        if re.match(br"[\s0-9A-Za-z+/]+[\s=]*$", sig[b'b']) is None:
             raise ValidationError("bh= value is not valid base64 (%s)" % sig[b'bh'])
         if len(re.sub(br"\s+", b"", sig[b'bh'])) % 4 != 0:
             raise ValidationError("bh= value is not valid base64 (%s)" % sig[b'bh'])
