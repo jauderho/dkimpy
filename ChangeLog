@@ -1,4 +1,8 @@
-Version 1.1.0
+Version 1.1.1
+    - Document dropping of Python 2 support (dropped as of 1.1.0) (LP:
+      #20086738)
+
+2023-02-25 Version 1.1.0
     - Add domain validity check for ascii domains (no specials)
     - Add option to specify index number of signature to verify to dkimverify
       (Thanks to Nick Baugh for the change)
