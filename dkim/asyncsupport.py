@@ -94,8 +94,11 @@ class DKIM(dkim.DKIM):
 
 
   async def verify(self,idx=0,dnsfunc=get_txt_async):
-    sig, include_headers, sigheaders = self.verify_headerprep(idx=0)
-    return await self.verify_sig(sig, include_headers, sigheaders[idx], dnsfunc)
+    prep = self.verify_headerprep(idx)
+    if prep:
+        sig, include_headers, sigheaders = prep
+        return await self.verify_sig(sig, include_headers, sigheaders[idx], dnsfunc)
+    return False # No signature
 
 
 async def verify_async(message, logger=None, dnsfunc=None, minkey=1024,

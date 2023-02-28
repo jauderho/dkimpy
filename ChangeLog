@@ -1,6 +1,9 @@
 Version 1.1.1
     - Document dropping of Python 2 support (dropped as of 1.1.0) (LP:
       #20086738)
+    - Fix traceback when attempting to verify an unsigned message using
+      async verify (Thanks to Nikita Sychev for the report and a suggested
+      fix) (LP: #2008723)
 
 2023-02-25 Version 1.1.0
     - Add domain validity check for ascii domains (no specials)
