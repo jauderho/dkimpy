@@ -1293,7 +1293,9 @@ class ARC(DomainSigner):
     # we can't use the AMS provided above, as it's already been canonicalized relaxed
     # for use in validating the AS.  However the AMS is included in the AMS itself,
     # and this can use simple canonicalization
-    raw_ams_header = [(x, y) for (x, y) in self.headers if x.lower() == b'arc-message-signature'][0]
+    raw_ams_header = [
+       (x, y) for (x, y) in self.headers if x.lower() == b'arc-message-signature' and b" i="+sig[b'i']+b";" in y.lower()
+    ][0]
 
     # Only relaxed canonicalization used by ARC
     if b'c' not in sig:
