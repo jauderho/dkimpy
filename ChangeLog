@@ -1,5 +1,5 @@
-Version 1.1.2
-   - Verify correct AMS header is used for ARC seal verification
+2023-04-09 Version 1.1.2
+   - Verify correct AMS header is used for ARC seal verification (André Cruz)
 
 2023-03-09 Version 1.1.1
     - Document dropping of Python 2 support (dropped as of 1.1.0) (LP:
