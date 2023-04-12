@@ -22,7 +22,7 @@ import tempfile
 import unittest
 
 import dkim
-import dknewkey
+import dkim.dknewkey as dknewkey
 
 def read_data(path):
     """Get the content of the given test data file."""

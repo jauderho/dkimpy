@@ -61,6 +61,7 @@ class TestSignAndVerify(unittest.TestCase):
         self.message4 = read_test_data("rfc6376.signed.msg")
         self.message5 = read_test_data("rfc6376.signed.rsa.msg")
         self.message6 = read_test_data("test.message.baddomain")
+        self.message7 = read_test_data("rfc6376.w1258.msg")
         self.key = read_test_data("test.private")
         self.rfckey = read_test_data("rfc8032_7_1.key")
 
@@ -249,6 +250,17 @@ b/mPfjC0QJTocVBq6Za/PlzfV+Py92VaCak19F4WrbVTK5Gg5tW220MCAwEAAQ=="""
                 d = dkim.DKIM(self.message4)
                 res = d.verify(dnsfunc=self.dnsfunc5)
                 self.assertTrue(res)
+    def test_non_utf8(self):
+        # A message with Windows-1258 encoding is signed and verifies.
+        for header_algo in (b"simple", b"relaxed"):
+            for body_algo in (b"simple", b"relaxed"):
+                sig = dkim.sign(
+                    self.message7, b"test", b"football.example.com", self.key,
+                    canonicalize=(header_algo, body_algo), signature_algorithm=b'rsa-sha256')
+                d = dkim.DKIM(self.message7)
+                res = d.verify(dnsfunc=self.dnsfunc5)
+                # As of 1.1.0 this won't verify, but at least we don't crash.  FIXME
+                self.assertFalse(res)
 
     def test_catch_bad_key(self):
         # Raise correct error for defective public key.

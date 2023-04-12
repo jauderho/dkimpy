@@ -1,4 +1,14 @@
-Version 1.1
+2023-04-09 Version 1.1.2
+   - Verify correct AMS header is used for ARC seal verification (André Cruz)
+
+2023-03-09 Version 1.1.1
+    - Document dropping of Python 2 support (dropped as of 1.1.0) (LP:
+      #20086738)
+    - Fix traceback when attempting to verify an unsigned message using
+      async verify (Thanks to Nikita Sychev for the report and a suggested
+      fix) (LP: #2008723)
+
+2023-02-25 Version 1.1.0
     - Add domain validity check for ascii domains (no specials)
     - Add option to specify index number of signature to verify to dkimverify
       (Thanks to Nick Baugh for the change)
@@ -12,6 +22,17 @@ Version 1.1
       (See LP 1901569 for background)
     - Add support for PKCS#8 for private keys, openssl 3 default (LP:
       #1978835) - Thanks to Adrien (spitap) for the change
+    - Add limitations section to README to document current IDN status
+    - Add USE_ASYNC flag to allow async to be disabled when aiodns is
+      installed (LP: #1954331) - see README.md for details
+    - Add new dkim.DnsTimeoutError class to report queried domain and selector
+      along with timeout error from dnspython (LP: #1873449)
+    - Invalid Authentication-Results header fields are ignored for ARC signing
+      (LP: #1884044)
+    - Correct base64 validation regexp so that valid signature with == split
+      between two lines are not incorrectly evaluated as invalid (LP:
+      #2002295) - Thanks to <https://launchpad.net/~obadz> for the report and
+      the proposed fix
 
 2019-12-31 Version 1.0.2
     - dknewkey: On posix operating systems set file permissions to 600 for

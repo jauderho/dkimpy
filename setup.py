@@ -25,15 +25,12 @@ from setuptools import setup
 import os
 import sys
 
-version = "1.1"
+version = "1.1.2"
 
 kw = {}  # Work-around for lack of 'or' requires in setuptools.
 try:
     import DNS
-    if sys.version_info[0] == 2:
-        kw['install_requires'] = ['PyDNS']
-    else:
-        kw['install_requires'] = ['Py3DNS']
+    kw['install_requires'] = ['Py3DNS']
 except ImportError:  # If PyDNS is not installed, prefer dnspython
     kw['install_requires'] = ['dnspython>=1.16.0']
 
@@ -73,7 +70,6 @@ setup(
       'License :: DFSG approved',
       'Natural Language :: English',
       'Operating System :: OS Independent',
-      'Programming Language :: Python',
       'Programming Language :: Python :: 3',
       'Topic :: Communications :: Email :: Mail Transport Agents',
       'Topic :: Communications :: Email :: Filters',

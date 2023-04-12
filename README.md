@@ -13,7 +13,7 @@ https://tools.ietf.org/html/rfc6376
 
 # VERSION
 
-This is dkimpy 1.1.
+This is dkimpy 1.1.2.
 
 # REQUIREMENTS
 
@@ -24,12 +24,10 @@ extras_requires feature 'ARC' will add the extra dependencies needed for ARC.
 Similarly, extras_requires feature 'asyncio' will add the extra dependencies
 needed for asyncio.
 
- - Python 2.x >= 2.7, or Python 3.x >= 3.5.  Recent versions have not been
-   tested on python < 2.7 or python3 < 3.4, but may still work on python2.6
-   and python 3.1 - 3.3.
- - dnspython or pydns. dnspython is preferred if both are present and
+ - Python 3.x >= 3.5.  Recent versions have not been on python3 < 3.4, but
+   may still work on earlier python3 versions.
+ - dnspython or py3dns. dnspython is preferred if both are present and
    installed to satisfy the DNS module requirement if neither are installed.
- - argparse.  Standard library in python2.7 and later.
  - authres.  Needed for ARC.
  - PyNaCl.  Needed for use of ed25519 capability.
  - aiodns.  Needed for asycnio (Requires python3.5 or later)
@@ -83,8 +81,10 @@ As of 0.6.0, all tests pass for both python2.7 and python3. The test suite
  ships with test runners for dkimpy.  After downloading the test suite, you
  can run the signing and validation tests like this:
 
-```python2.7 ./testarc.py sign runners/arcsigntest.py```
-```python2.7 ./testarc.py validate runners/arcverifytest.py```
+```python3 ./testarc.py sign runners/arcsigntest.py```
+```python3 ./testarc.py validate runners/arcverifytest.py```
+
+As ov version 1.1.0, python2.7 is no longer supported.
 
 # USAGE
 
@@ -176,6 +176,9 @@ https://tools.ietf.org/html/rfc8617
 In addition to arcsign and arcverify, the dkim module now provides
 arc_sign and arc_verify functions as well as an ARC class.
 
+If an invalid authentication results header field is included in the set for
+ARC, it is ignored and no error is raised.
+
 Both DKIM ed25519 and ARC are now considered stable (no longer experimantal).
 
 ## ASYNC SUPPORT
@@ -197,6 +200,9 @@ Here is a simple example of dkim.verify_async usage:
 
 This feature requires python3.5 or newer.
 
+If aiodns is available, the async functions will be used.  To avoide async
+when aiodns is availale, set dkim.USE_ASYNC = False.
+
 ## TLSRPT (TLS Report)
 
 As of version 1.0, the RFC 8460 tlsrpt service type is supported:
@@ -215,6 +221,13 @@ flag when verifying the signature:
 If tlsrpt='strict', only public key records with s=tlsrpt will be considered
 valid.  If set to tlsrpt=True, the service type is not required, but other
 RFC 8460 requirements are applied.
+
+# LIMITATIONS
+
+Dkimpy will correctly sign/verify messages with ASCII or UTF-8 content.
+Messages that contain other types of content will not verify correctly.  It
+does not yet implement RFC 8616, Email Authentication for Internationalized
+Mail.
 
 # FEEDBACK
 

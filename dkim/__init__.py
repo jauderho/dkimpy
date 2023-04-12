@@ -40,9 +40,12 @@ import sys
 import time
 import binascii
 
+# Set to False to not use async functions even though aiodns is installed.
+USE_ASYNC = True
+
 # only needed for arc
 try:
-    from authres import AuthenticationResultsHeader
+    import authres
 except ImportError:
     pass
 
@@ -72,13 +75,17 @@ from dkim.crypto import (
 try:
     from dkim.dnsplug import get_txt
 except ImportError:
-    try:
-        import aiodns
-        from dkim.asyncsupport import get_txt_async as get_txt
-    except:
-        # Only true if not using async
-        def get_txt(s,timeout=5):
-            raise RuntimeError("DKIM.verify requires DNS or dnspython module")
+    if USE_ASYNC:
+        try:
+            import aiodns
+            from dkim.asyncsupport import get_txt_async as get_txt
+        except:
+            # Only true if not using async
+            def get_txt(s,timeout=5):
+                raise RuntimeError("DKIM.verify requires DNS or dnspython module")
+    else:
+        raise RuntimeError("DKIM.verify requires DNS or dnspython module")
+
 from dkim.util import (
     get_default_logger,
     InvalidTagValueList,
@@ -94,6 +101,8 @@ __all__ = [
     "ValidationError",
     "AuthresNotFoundError",
     "NaClNotFoundError",
+    "DnsTimeoutError",
+    "USE_ASYNC",
     "CV_Pass",
     "CV_Fail",
     "CV_None",
@@ -187,6 +196,9 @@ class NaClNotFoundError(DKIMException):
 class UnknownKeyTypeError(DKIMException):
     """ Key type (k tag) is not known (rsa/ed25519) """
 
+class DnsTimeoutError(DKIMException):
+    """ DNS query for public key timed out """
+
 
 def select_headers(headers, include_headers):
     """Select message header fields to be signed/verified.
@@ -272,13 +284,13 @@ def validate_signature_fields(sig, mandatory_fields=[b'v', b'a', b'b', b'bh', b'
         raise ValidationError("unknown signature algorithm: %s" % sig[b'a'])
 
     if b'b' in sig:
-        if re.match(br"[\s0-9A-Za-z+/]+=*$", sig[b'b']) is None:
+        if re.match(br"[\s0-9A-Za-z+/]+[\s=]*$", sig[b'b']) is None:
             raise ValidationError("b= value is not valid base64 (%s)" % sig[b'b'])
         if len(re.sub(br"\s+", b"", sig[b'b'])) % 4 != 0:
             raise ValidationError("b= value is not valid base64 (%s)" % sig[b'b'])
 
     if b'bh' in sig:
-        if re.match(br"[\s0-9A-Za-z+/]+=*$", sig[b'bh']) is None:
+        if re.match(br"[\s0-9A-Za-z+/]+[\s=]*$", sig[b'b']) is None:
             raise ValidationError("bh= value is not valid base64 (%s)" % sig[b'bh'])
         if len(re.sub(br"\s+", b"", sig[b'bh'])) % 4 != 0:
             raise ValidationError("bh= value is not valid base64 (%s)" % sig[b'bh'])
@@ -788,6 +800,10 @@ class DomainSigner(object):
     except binascii.Error as e:
       self.logger.error('KeyFormatError: {0}'.format(e))
       return False
+    except dns.exception.Timeout as e:
+      self.logger.error('DnsTimeoutError: Domain: {0} Selector: {1} Error message: {2}'.format(
+          sig[b'd'], sig[b's'], e))
+      return False
     return self.verify_sig_process(sig, include_headers, sig_header, dnsfunc)
 
 
@@ -1021,10 +1037,10 @@ class ARC(DomainSigner):
     self.add_should_not(('Authentication-Results',))
     # check if authres has been imported
     try:
-        AuthenticationResultsHeader
+        authres.AuthenticationResultsHeader
     except:
         self.logger.debug("authres package not installed")
-        raise AuthresNotFoundError
+        raise authres.AuthresNotFoundError
 
     try:
         pk = parse_pem_private_key(privkey)
@@ -1033,8 +1049,14 @@ class ARC(DomainSigner):
 
     # extract, parse, filter & group AR headers
     ar_headers = [res.strip() for [ar, res] in self.headers if ar == b'Authentication-Results']
-    grouped_headers = [(res, AuthenticationResultsHeader.parse('Authentication-Results: ' + res.decode('utf-8')))
-                       for res in ar_headers]
+
+    grouped_headers = []
+    for res in ar_headers:
+        try: # see LP: #1884044
+            grouped_headers.append((res, authres.AuthenticationResultsHeader.parse('Authentication-Results: ' + res.decode('utf-8'))))
+        except authres.core.SyntaxError:
+            # Skip over invalid AR header fields
+            pass
     auth_headers = [res for res in grouped_headers if res[1].authserv_id == srv_id.decode('utf-8')]
 
     if len(auth_headers) == 0:
@@ -1048,7 +1070,7 @@ class ARC(DomainSigner):
     auth_results = srv_id + b'; ' + (b';' + self.linesep + b'  ').join(results)
 
     # extract cv
-    parsed_auth_results = AuthenticationResultsHeader.parse('Authentication-Results: ' + auth_results.decode('utf-8'))
+    parsed_auth_results = authres.AuthenticationResultsHeader.parse('Authentication-Results: ' + auth_results.decode('utf-8'))
     arc_results = [res for res in parsed_auth_results.results if res.method == 'arc']
     if len(arc_results) == 0:
       chain_validation_status = CV_None
@@ -1271,7 +1293,9 @@ class ARC(DomainSigner):
     # we can't use the AMS provided above, as it's already been canonicalized relaxed
     # for use in validating the AS.  However the AMS is included in the AMS itself,
     # and this can use simple canonicalization
-    raw_ams_header = [(x, y) for (x, y) in self.headers if x.lower() == b'arc-message-signature'][0]
+    raw_ams_header = [
+       (x, y) for (x, y) in self.headers if x.lower() == b'arc-message-signature' and b" i="+sig[b'i']+b";" in y.lower()
+    ][0]
 
     # Only relaxed canonicalization used by ARC
     if b'c' not in sig:
@@ -1369,7 +1393,7 @@ def verify(message, logger=None, dnsfunc=get_txt, minkey=1024,
 
 
 # aiodns requires Python 3.5+, so no async before that
-if sys.version_info >= (3, 5):
+if sys.version_info >= (3, 5) and USE_ASYNC:
     try:
         import aiodns
         from dkim.asyncsupport import verify_async
