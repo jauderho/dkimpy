@@ -468,6 +468,8 @@ def evaluate_pk(name, s):
               pk = nacl.signing.VerifyKey(pub[b'p'], encoder=nacl.encoding.Base64Encoder)
           except NameError:
               raise NaClNotFoundError('pynacl module required for ed25519 signing, see README.md')
+          except nacl.exceptions.ValueError as e:
+              raise KeyFormatError("could not parse ed25519 public key (%s): %s" % (pub[b'p'],e))
           keysize = 256
           ktag = b'ed25519'
   except KeyError:
@@ -477,9 +479,9 @@ def evaluate_pk(name, s):
           pk = parse_public_key(base64.b64decode(pub[b'p']))
           keysize = bitsize(pk['modulus'])
       except KeyError:
-          raise KeyFormatError("incomplete public key: %s" % s)
+          raise KeyFormatError("incomplete RSA public key: %s" % s)
       except (TypeError,UnparsableKeyError) as e:
-          raise KeyFormatError("could not parse public key (%s): %s" % (pub[b'p'],e))
+          raise KeyFormatError("could not parse RSA public key (%s): %s" % (pub[b'p'],e))
       ktag = b'rsa'
   if pub[b'k'] != b'rsa' and pub[b'k'] != b'ed25519':
       raise KeyFormatError('unknown algorithm in k= tag: {0}'.format(pub[b'k']))
