@@ -152,7 +152,10 @@ dkimverify
 
 dknewkey is s script that produces private and public key pairs suitable
 for use with DKIM.  Note that the private key file format used for ed25519 is
-not standardized (there is no standard) and is unique to dkimpy.
+not standardized (there is no standard) and is unique to dkimpy.  Creation of
+keys should be done in a secure environment.  If an unauthorized entity gains
+access to current private keys they can generate signed email that will pass
+DKIM checkes and will be difficult to repudiate.
 
 dkimsign is a filter that reads an RFC822 message on standard input, and
 writes the same message on standard output with a DKIM-Signature line
