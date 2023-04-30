@@ -4,6 +4,7 @@ Version 1.1.3
    - Create ed25519 key files with secure permissions to avoid risk of
      insecure chmode call/race condition (Thanks to Hanno Böck for the report
      and the suggested fix) (LP: #2017430)
+   - Properly cleanup temporary directories in tests
 
 2023-04-09 Version 1.1.2
    - Verify correct AMS header is used for ARC seal verification (André Cruz)
