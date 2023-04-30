@@ -1,4 +1,4 @@
-Version 1.1.3
+2023-04-30 Version 1.1.3
    - Catch nacl.exceptions.ValueError and raise KeyFormatError, similar to how
      RSA key errors are treated (LP: #2018021)
    - Create ed25519 key files with secure permissions to avoid risk of
