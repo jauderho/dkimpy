@@ -33,6 +33,7 @@ def get_txt_dnspython(name, timeout=5):
           if r.rdtype == dns.rdatatype.TXT:
               return b"".join(list(r.items)[0].strings)
     except dns.resolver.NXDOMAIN: pass
+    except dns.resolver.NoNameservers: pass
     return None
 
 
