@@ -802,7 +802,7 @@ class DomainSigner(object):
     except binascii.Error as e:
       self.logger.error('KeyFormatError: {0}'.format(e))
       return False
-    except dns.exception.Timeout as e:
+    except DnsTimeoutError as e:
       self.logger.error('DnsTimeoutError: Domain: {0} Selector: {1} Error message: {2}'.format(
           sig[b'd'], sig[b's'], e))
       return False
