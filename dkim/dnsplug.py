@@ -29,7 +29,7 @@ def get_txt_dnspython(name, timeout=5):
     """Return a TXT record associated with a DNS name."""
     import dkim
     try:
-      a = dns.resolver.query(name, dns.rdatatype.TXT,raise_on_no_answer=False, lifetime=timeout)
+      a = dns.resolver.resolve(name, dns.rdatatype.TXT,raise_on_no_answer=False, lifetime=timeout, search=True)
       for r in a.response.answer:
           if r.rdtype == dns.rdatatype.TXT:
               return b"".join(list(r.items)[0].strings)
