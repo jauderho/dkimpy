@@ -64,10 +64,12 @@ def GenEd25519Keys(private_key_file, verbose=True):
     if verbose:
         eprint('generating ' + private_key_file)
     priv_key = skg.generate()
+    if os.name == 'posix':
+        old_umask = os.umask(0o077)
     with open(private_key_file, 'w') as pkf:
         pkf.write(priv_key.encode(encoder=nacl.encoding.Base64Encoder).decode("utf-8"))
     if os.name == 'posix':
-        os.chmod(private_key_file, 0o600)
+        os.umask(old_umask)
     return(priv_key)
 
 def ExtractRSADnsPublicKey(private_key_file, dns_file, verbose=True):

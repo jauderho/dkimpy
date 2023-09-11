@@ -60,6 +60,7 @@ class TestSignAndVerify(unittest.TestCase):
                     canonicalize=(header_algo, body_algo))
                 res = dkim.verify(sig + self.message, dnsfunc=self.dnsfuncRSA)
                 self.assertTrue(res)
+        tmpdir.cleanup()
 
 
     def test_generate_verifies_Ed25519_key(self):
@@ -82,6 +83,7 @@ class TestSignAndVerify(unittest.TestCase):
                     canonicalize=(header_algo, body_algo))
                 res = dkim.verify(sig + self.message, dnsfunc=self.dnsfuncED25519)
                 self.assertTrue(res)
+        tmpdir.cleanup()
 
 
     def dnsfuncRSA(self, domain, timeout=5):

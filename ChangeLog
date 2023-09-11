@@ -1,3 +1,21 @@
+2023-07-28 Version 1.1.5
+   - Use dns.resolver.resolve instead of dns.resolver.query due to deprecation
+     (LP: 2028783) - Thanks to Pedro Vicente for the report and the fix
+
+2023-05-12 Version 1.1.4
+   - Treat dns.resolver.NoNameservers like NXDOMAIN (not an error) (Thanks to
+     David for the patch and the report)
+   - Confine errors from dnspython to dnsplug and use dkim errors, since
+     dkim.__init__.py doesn't import dns and needs dkim errors (LP: #2018646)
+
+2023-04-30 Version 1.1.3
+   - Catch nacl.exceptions.ValueError and raise KeyFormatError, similar to how
+     RSA key errors are treated (LP: #2018021)
+   - Create ed25519 key files with secure permissions to avoid risk of
+     insecure chmode call/race condition (Thanks to Hanno Böck for the report
+     and the suggested fix) (LP: #2017430)
+   - Properly cleanup temporary directories in tests
+
 2023-04-09 Version 1.1.2
    - Verify correct AMS header is used for ARC seal verification (André Cruz)
 
